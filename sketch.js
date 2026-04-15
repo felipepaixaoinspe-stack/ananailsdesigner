@@ -64,9 +64,11 @@ function preload() {
 function setup() {
 	
 createCanvas(windowWidth, windowHeight);
-	larguraApp = min(420, windowWidth - 20);
+
+// 🔥 ocupar tela inteira (iPhone)
+larguraApp = windowWidth;
+offsetX = 0;
 	
-offsetX = max(0, (windowWidth - 420) / 2);
 nomeInput = createInput();
 valorSelect = createSelect();
 pagoCheckbox = createCheckbox('Pago', false);
@@ -2123,8 +2125,8 @@ function touchEnded() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 
-  offsetX = max(0, (windowWidth - 420) / 2);
-  larguraApp = min(420, windowWidth - 20);
+  larguraApp = windowWidth;
+  offsetX = 0;
 }
 
 function touchMoved() {
