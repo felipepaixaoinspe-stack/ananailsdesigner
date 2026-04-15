@@ -2,7 +2,6 @@
 
 let offsetX;
 let larguraApp;
-let escala;
 let clientes = [];
 let nomeInput, valorSelect, pagoCheckbox;
 let botaoAdicionar;
@@ -57,19 +56,18 @@ let btnRelatorio;
 
 
 
-
 function preload() {
   // COLOQUE A URL DA FOTO AQUI
   fotoDona = loadImage('https://i.ibb.co/G4TMTBgr/559418991-18383504737178501-2574304252163910698-n.jpg');
 }
 
 function setup() {
-
-  escala = window.innerWidth / 420;	
-createCanvas(window.innerWidth, window.innerHeight);
 	
+createCanvas(windowWidth, windowHeight);
+	createCanvas(windowWidth, windowHeight);
+
 // 🔥 ocupar tela inteira (iPhone)
-larguraApp = window.innerWidth;
+larguraApp = windowWidth;
 offsetX = 0;
 	
 nomeInput = createInput();
@@ -108,14 +106,16 @@ buscaInput.elt.addEventListener('blur', () => {
 	
 // POSIÇÃO CORRETA
 
-nomeInput.position(offsetX + 19 * escala, 310 * escala);
-nomeInput.size(120 * escala, 31 * escala);
+nomeInput.position(offsetX + 19, 310);
+nomeInput.size(120, 31);
 
-valorSelect.position(offsetX + 150 * escala, 310 * escala);
-valorSelect.size(60 * escala, 31 * escala);	
-botaoAdicionar.position(offsetX + 306 * escala, 311 * escala);
+valorSelect.position(offsetX + 150, 310);
+valorSelect.size(60, 31);
 	
-pagoCheckbox.position(offsetX + 226 * escala, 315 * escala);	
+botaoAdicionar.position(offsetX + 306, 311);
+	
+pagoCheckbox.position(offsetX + 226, 315);
+	
 	
 // ESTILO IGUAL PARA OS DOIS
 nomeInput.style('box-sizing', 'border-box');
@@ -142,8 +142,8 @@ buscaInput.style('font-size', '14px');
 buscaInput.style('outline', 'none');
 buscaInput.style('box-shadow', '0 2px 6px rgba(0,0,0,0.1)');
 buscaInput.style('box-sizing', 'border-box');
-buscaInput.size(larguraApp - 30, 40 * escala);
-	buscaInput.position(offsetX + 20 * escala, 360 * escala);
+buscaInput.size(larguraApp - 15, 40);
+buscaInput.position(offsetX + 20, 360);
 	
 	let tamanho = 24 + animPassaro * 10;
 iconePassaro.size(tamanho, tamanho);
@@ -177,7 +177,7 @@ for (let c of clientes) {
 	
 filtroMes = createSelect();
 
-filtroMes.position(offsetX + 275 * escala, 100 * escala);
+filtroMes.position(offsetX + 275, 100);
 filtroMes.size(150, 35);
 	
 filtroMes.style('border-radius', '10px');
@@ -239,8 +239,8 @@ filtroMes.changed(() => {
 
 btnAgenda = createButton('📅');
 
-btnAgenda.position(offsetX + 225 * escala, 100 * escala);
-btnAgenda.size(40 * escala, 35 * escala);
+btnAgenda.position(offsetX + 225, 100); // ajusta do ladinho
+btnAgenda.size(40, 35);
 
 btnAgenda.style('border', 'none');
 btnAgenda.style('border-radius', '8px');
@@ -255,8 +255,8 @@ btnAgenda.mousePressed(() => {
 	// 👇🔥 COLE AQUI
 btnRelatorio = createButton('📊');
 
-btnRelatorio.position(offsetX + 300 * escala, 230 * escala);
-	btnRelatorio.size(40 * escala, 35 * escala);
+btnRelatorio.position(offsetX + 300, 230);
+btnRelatorio.size(40, 35);
 
 btnRelatorio.style('border', 'none');
 btnRelatorio.style('border-radius', '8px');
@@ -268,8 +268,8 @@ btnRelatorio.mousePressed(() => {
 	
 btnMeta = createButton('✏️');
 btnMeta.position(offsetX + 350, 232);
-btnMeta.size(40 * escala, 30 * escala);
-	btnMeta.hide();
+btnMeta.size(40, 30);
+btnMeta.hide();
 
 btnMeta.style('background-color', 'transparent');
 btnMeta.style('color', '#666');
@@ -307,8 +307,8 @@ valorSelect.option('Manut c/ Decoração + Pé ', 145);
 
 	
 // BOTÃO
-botaoAdicionar.size(120 * escala, 30 * escala);
-	botaoAdicionar.style('background-color', '#ff69b4');
+  botaoAdicionar.size(120, 30);
+  botaoAdicionar.style('background-color', '#ff69b4');
   botaoAdicionar.style('color', 'white');
   botaoAdicionar.style('border', 'none');
   botaoAdicionar.style('border-radius', '8px');
@@ -318,8 +318,8 @@ botaoAdicionar.size(120 * escala, 30 * escala);
 // NOME
 nomeAgendaInput = createInput();
 	nomeAgendaInput.style('z-index', '1');
-nomeAgendaInput.position(offsetX + 50 * escala, 510 * escala);
-nomeAgendaInput.size(300 * escala, 30 * escala);
+nomeAgendaInput.position(offsetX + 50, 510);
+nomeAgendaInput.size(300, 30);
 nomeAgendaInput.attribute('placeholder', 'Nome do cliente');
 	
 	nomeAgendaInput.style('z-index', '1');
@@ -338,8 +338,9 @@ nomeAgendaInput.style('white-space', 'nowrap');
 // SERVIÇO
 servicoAgendaSelect = createSelect();
 	servicoAgendaSelect.style('z-index', '1');
-servicoAgendaSelect.position(offsetX + 50 * escala, 555 * escala);
-servicoAgendaSelect.size(300 * escala, 30 * escala);
+servicoAgendaSelect.position(offsetX + 50, 555);
+servicoAgendaSelect.size(300, 30);
+
 	servicoAgendaSelect.style('border', 'none');
 servicoAgendaSelect.style('border-radius', '10px');
 servicoAgendaSelect.style('padding', '7px');
@@ -361,8 +362,8 @@ servicoAgendaSelect.option('Manut c/ Decoração + Pé', 145);
 // DATA
 dataAgendaInput = createInput();
 	dataAgendaInput.style('z-index', '1');
-dataAgendaInput.position(offsetX + 50 * escala, 600 * escala);
-dataAgendaInput.size(140 * escala, 30 * escala);
+dataAgendaInput.position(offsetX + 50, 600);
+dataAgendaInput.size(140, 30);
 dataAgendaInput.attribute('type', 'date');
 
 	dataAgendaInput.style('border', 'none');
@@ -375,9 +376,9 @@ dataAgendaInput.style('padding-left', '35px');
 // HORA
 horaAgendaInput = createInput();
 	horaAgendaInput.style('z-index', '1');
-horaAgendaInput.position(offsetX + 210 * escala, 600 * escala);
-horaAgendaInput.size(140 * escala, 30 * escala);
-	horaAgendaInput.attribute('type', 'time');
+horaAgendaInput.position(offsetX + 210, 600);
+horaAgendaInput.size(140, 30);
+horaAgendaInput.attribute('type', 'time');
 	horaAgendaInput.style('border', 'none');
 horaAgendaInput.style('border-radius', '10px');
 horaAgendaInput.style('padding', '10px');
@@ -387,12 +388,12 @@ horaAgendaInput.style('padding-left', '35px');
 	
 // BOTÃO
 btnAddAgenda = createButton('Adicionar');
-btnAddAgenda.position(offsetX + 120 * escala, 645 * escala);
+btnAddAgenda.position(offsetX + 120, 645);
 btnAddAgenda.size(180, 40);
 
 btnCancelar = createButton('Cancelar');
 
-btnCancelar.position(offsetX + 120 * escala, 690 * escala);
+btnCancelar.position(offsetX + 120, 690);
 btnCancelar.size(180, 35);
 
 btnCancelar.style('background-color', '#ccc');
@@ -533,15 +534,16 @@ if (editandoIndex >= 0) {
 
   // TÍTULO
   fill('#ff69b4');
-  textSize(20 * escala);
+  textSize(20);
   textStyle(BOLD);
   text('Agendamento 📅', offsetX + 20, 40);
 
   // BOTÃO VOLTAR
   fill('#ff69b4');
-rect(offsetX + 20 * escala, 60 * escala, 120 * escala, 50 * escala, 12 * escala);
+  rect(offsetX + 20, 60, 120, 50, 12);
+
   fill(255);
-textSize(14 * escala);
+  textSize(14);
   textAlign(CENTER, CENTER);
   text('Voltar', offsetX + 80, 85);
 
@@ -550,7 +552,7 @@ textSize(14 * escala);
 if (mesSelecionado === null) {
 
   // 🔼 ALTURA FILTRO DO MêS
-filtroMes.position(offsetX + 275 * escala, 100 * escala);
+  filtroMes.position(offsetX + 275, 70);
   btnAgenda.position(offsetX + 225, 70);
   
   // 🔥 CARD "AGENDA DE HOJE"
@@ -563,7 +565,7 @@ filtroMes.position(offsetX + 275 * escala, 100 * escala);
 
   // LISTA DE HORÁRIOS
   fill(0);
-textSize(13 * escala);
+  textSize(13);
 
  let yHoje = 195;
 let hoje = formatarData(new Date());
@@ -629,8 +631,8 @@ fill(corAvatar);
 ellipse(xCard + 25, yHoje + 5, 30, 30);
 
 fill(255);
-textSize(22 * escala);
-	  textAlign(CENTER, CENTER);
+textSize(22);
+textAlign(CENTER, CENTER);
 text(icone, xCard + 25, yHoje + 5);
 
     // NOME (esquerda)
@@ -766,7 +768,7 @@ textAlign(LEFT);
   
 	// 🔽 COLOCA AQUI 👇
 if (mesSelecionado !== null) {
-filtroMes.position(offsetX + 275 * escala, 100 * escala);
+  filtroMes.position(offsetX + 275, 70);
 }
 	
 
@@ -1615,13 +1617,13 @@ textAlign(LEFT);
 
   // 🔥 TÍTULO
   fill('#ff69b4');
-  textSize(20 * escala);
+  textSize(20);
   textStyle(BOLD);
   text('📊 Relatório Mensal', offsetX + 20, 40);
 
   // 🔥 FILTRO (POSIÇÃO CORRETA)
   filtroMes.show();
-filtroMes.position(offsetX + 275 * escala, 100 * escala);
+  filtroMes.position(offsetX + larguraApp - 160, 30);
 
   // 🔥 SE NÃO ESCOLHEU MÊS
   if (mesSelecionado === null) {
@@ -2122,11 +2124,10 @@ function touchEnded() {
 }
 
 function windowResized() {
-  resizeCanvas(window.innerWidth, window.innerHeight);
+  resizeCanvas(windowWidth, windowHeight);
 
-  larguraApp = window.innerWidth;
+  larguraApp = windowWidth;
   offsetX = 0;
-  escala = window.innerWidth / 420; // 👈 AQUI
 }
 
 function touchMoved() {
