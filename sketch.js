@@ -10,7 +10,6 @@ let buscaInput;
 let fotoDona;
 let tempoClique = 0;
 let scrollY = 0;
-let scrollRelatorio = 0;
 let scrollClientes = 0;
 let scrollAgenda = 0;
 let buscaFocada = false;
@@ -52,7 +51,7 @@ let fogosJaAtivados = false;
 let animarTotalGeral = 0;
 let ultimoTotalGeral = 0;
 let animacaoSubindo = [];
-let btnRelatorio;
+
 
 
 
@@ -64,12 +63,15 @@ function preload() {
 function setup() {
 	
 createCanvas(windowWidth, windowHeight);
-	createCanvas(windowWidth, windowHeight);
+	larguraApp = min(420, windowWidth - 20);
+  
+  setupFirebase();
 
-// 🔥 ocupar tela inteira (iPhone)
-larguraApp = windowWidth;
-offsetX = 0;
+setTimeout(() => {
+  carregarNuvem();
+}, 1000);
 	
+offsetX = max(0, (windowWidth - 420) / 2);
 nomeInput = createInput();
 valorSelect = createSelect();
 pagoCheckbox = createCheckbox('Pago', false);
@@ -250,20 +252,6 @@ btnAgenda.style('font-size', '16px');
 
 btnAgenda.mousePressed(() => {
   telaAtual = 'agenda';
-});
-
-	// 👇🔥 COLE AQUI
-btnRelatorio = createButton('📊');
-
-btnRelatorio.position(offsetX + 300, 230);
-btnRelatorio.size(40, 35);
-
-btnRelatorio.style('border', 'none');
-btnRelatorio.style('border-radius', '8px');
-btnRelatorio.style('background-color', '#f1f2f6');
-
-btnRelatorio.mousePressed(() => {
-  telaAtual = 'relatorio';
 });
 	
 btnMeta = createButton('✏️');
@@ -483,52 +471,98 @@ setInterval(() => {
 
 function draw() {
   background('#f8f8fb');
+  
+if (telaAtual === 'principal') {
 
-  if (telaAtual === 'principal') {
-    telaPrincipal();
+  // 🔥 CORREÇÃO AQUI
+  filtroMes.position(offsetX + 275, 100);
+  btnAgenda.position(offsetX + 225, 100);
 
-  } else if (telaAtual === 'agenda') {
-    telaAgenda();
+  buscaInput.show();
+  nomeInput.show();
+  valorSelect.show();
+  pagoCheckbox.show();
+  botaoAdicionar.show();
 
-  } else if (telaAtual === 'relatorio') {
-    telaRelatorio();
+  btnMeta.show();
+  telaPrincipal();
+
+  btnMenu.show();
+
+  if (mostrarBackup) {
+    btnBackup.show();
+    btnImportar.show();
+    inputFile.show();
+  } else {
+    btnBackup.hide();
+    btnImportar.hide();
+    inputFile.hide();
   }
+
+	  
+	  
+	nomeAgendaInput.hide();
+	  iconeNome.hide();
+iconeServico.hide();
+iconeData.hide();
+iconeHora.hide();
+    servicoAgendaSelect.hide();
+    dataAgendaInput.hide();
+    horaAgendaInput.hide();
+    btnAddAgenda.hide();
+	  
+  } else if (telaAtual === 'agenda') {
+      btnMenu.hide();
+    btnBackup.hide();
+btnImportar.hide();
+inputFile.hide();
+	  btnMeta.hide();
+    telaAgenda();
+	  
+if (editandoIndex >= 0) {
+  btnAddAgenda.html('Salvar edição');
+} else {
+  btnAddAgenda.html('Adicionar');
 }
+	  
+	  iconePassaro.hide();
+	  nomeInput.hide();
+    valorSelect.hide();
+    pagoCheckbox.hide();
+    botaoAdicionar.hide();
+    buscaInput.hide();
+	  iconePassaro.hide();
+    nomeAgendaInput.show();
+	  iconeNome.show();
+iconeServico.show();
+iconeData.show();
+iconeHora.show();
+    servicoAgendaSelect.show();
+    dataAgendaInput.show();
+    horaAgendaInput.show();
+    btnAddAgenda.show();
+    servicoAgendaSelect.show();
+    dataAgendaInput.show();
+    horaAgendaInput.show();
+    btnAddAgenda.show();
+	  
+	  // 🔥 POSIÇÃO DOS ÍCONES (CORRETO)
+iconeNome.position(offsetX + 55, 515);
+iconeServico.position(offsetX + 55, 560);
+iconeData.position(offsetX + 55, 605);
+iconeHora.position(offsetX + 215, 605);
+
+if (editandoIndex >= 0) {
+  btnCancelar.show();
+} else {
+  btnCancelar.hide();
+}
+
+} // 🔥 fecha o else if (agenda)
+} // 🔥 fecha o draw()
 
 
 function telaAgenda() {
-
-// 🔥 ESCONDER PRINCIPAL
-buscaInput.hide();
-nomeInput.hide();
-valorSelect.hide();
-pagoCheckbox.hide();
-botaoAdicionar.hide();
-	
-// 🔥 ESCONDER ELEMENTOS QUE NÃO SÃO DA AGENDA
-btnMeta.hide();
-btnMenu.hide();
-	btnRelatorio.hide();
-	iconePassaro.hide(); // 👈 BORBOLETA SUME
-	
-// 🔥 MOSTRAR AGENDA
-nomeAgendaInput.show();
-servicoAgendaSelect.show();
-dataAgendaInput.show();
-horaAgendaInput.show();
-btnAddAgenda.show();
-btnAgenda.show();
-filtroMes.show();
-
-// cancelar só quando editando
-if (editandoIndex >= 0) {
-  btnCancelar.show();
-  btnAddAgenda.html('Salvar edição'); // 🔥 AQUI
-} else {
-  btnCancelar.hide();
-  btnAddAgenda.html('Adicionar'); // 🔥 AQUI
-}
-	
   background('#f8f8fb');
 	  textFont('Helvetica'); // 👈 AQUI
 
@@ -973,39 +1007,6 @@ pop();
 
 
 function telaPrincipal() {
-
-	// 🔥 MOSTRAR ELEMENTOS DA PRINCIPAL
-
-buscaInput.show();
-nomeInput.show();
-valorSelect.show();
-pagoCheckbox.show();
-botaoAdicionar.show();
-btnAgenda.show();
-filtroMes.show();
-btnMenu.show();
-
-	if (mostrarBackup) {
-  btnBackup.show();
-  btnImportar.show();
-} else {
-  btnBackup.hide();
-  btnImportar.hide();
-}
-	
-if (mesSelecionado === null) {
-  btnRelatorio.show();
-} else {
-  btnRelatorio.hide();
-}
-	
-// 🔥 ESCONDER OUTROS
-nomeAgendaInput.hide();
-servicoAgendaSelect.hide();
-dataAgendaInput.hide();
-horaAgendaInput.hide();
-btnAddAgenda.hide();
-btnCancelar.hide();
 	
 		background('#f8f8fb');
 	
@@ -1037,7 +1038,7 @@ iconePassaro.position(
   let larguraBusca = buscaFocada ? 340 : 300;
 
 // BUSCAR CLIENTE
-buscaInput.attribute('placeholder', 'Digite para buscar cliente 🔍...');
+buscaInput.attribute('placeholder', '🔍 Buscar cliente...');
 
 // 🔥 CALCULAR LIMITE
 let inicioLista = 410;
@@ -1065,12 +1066,7 @@ drawingContext.rect(0, 371, width, height - 410);
 drawingContext.clip();
 
 translate(0, scrollY);
-
-	let busca = (buscaInput?.value() || '').trim();
-
-if (busca.length > 0) {
-  desenharLista();
-}
+desenharLista();
 
 // remove o recorte
 drawingContext.restore();
@@ -1110,6 +1106,14 @@ function salvar() {
   try {
     localStorage.setItem('clientes', JSON.stringify(clientes));
     atualizarCache();
+
+    // 🔥 SALVAR NA NUVEM
+    if (typeof salvarNuvem === "function") {
+  setTimeout(() => {
+    salvarNuvem();
+  }, 500);
+}
+
   } catch (e) {
     alert('Erro ao salvar dados! Seu armazenamento pode estar cheio.');
     console.error(e);
@@ -1579,389 +1583,288 @@ text('✔', offsetX + larguraApp - 90, y + 20);
   }
 }
 
-function telaRelatorio() {
-
-	// 🔥 FUNDO PRIMEIRO (IMPORTANTE)
-  background('#f8f8fb');
-
-	// 🔙 BOTÃO VOLTAR
-fill('#ff69b4');
-rect(offsetX + 20, 60, 100, 35, 10);
-
-fill(255);
-textSize(13);
-textAlign(CENTER, CENTER);
-text('← Voltar', offsetX + 70, 77);
-
-textAlign(LEFT);
-
-  // 🔥 ESCONDER TUDO
-  buscaInput.hide();
-  nomeInput.hide();
-  valorSelect.hide();
-  pagoCheckbox.hide();
-  botaoAdicionar.hide();
-  btnRelatorio.hide();
-  iconePassaro.hide();
-  btnMeta.hide();
-  btnMenu.hide();
-  btnAgenda.hide();
-
-  nomeAgendaInput.hide();
-  servicoAgendaSelect.hide();
-  dataAgendaInput.hide();
-  horaAgendaInput.hide();
-  btnAddAgenda.hide();
-  btnCancelar.hide();
-
-
-  // 🔥 TÍTULO
-  fill('#ff69b4');
-  textSize(20);
-  textStyle(BOLD);
-  text('📊 Relatório Mensal', offsetX + 20, 40);
-
-  // 🔥 FILTRO (POSIÇÃO CORRETA)
-  filtroMes.show();
-  filtroMes.position(offsetX + larguraApp - 160, 30);
-
-  // 🔥 SE NÃO ESCOLHEU MÊS
-  if (mesSelecionado === null) {
-    fill(120);
-    textSize(14);
-    text('Escolha um mês primeiro ☝🏻', offsetX + 220, 80);
-    return;
-  }
-
-  let total = 0;
-  let recebido = 0;
-  let y = 150;
-	
-// 🔥 LIMITES DO SCROLL
-let alturaLista = clientes.length * 60;
-let alturaVisivel = height - 150;
-
-let limite = alturaVisivel - alturaLista;
-limite = min(0, limite);
-
-scrollRelatorio = constrain(scrollRelatorio, limite, 0);
-
-// 🔥 ATIVA SCROLL
-push();
-
-drawingContext.save();
-drawingContext.beginPath();
-drawingContext.rect(0, 130, width, height);
-drawingContext.clip();
-
-translate(0, scrollRelatorio);
-	
-  for (let c of clientes) {
-
-    if (!c.data) continue;
-
-    let data = new Date(c.data);
-    let mes = data.getMonth();
-
-    if (mes !== mesSelecionado) continue;
-
-    total += c.valor;
-    if (c.pago) recebido += c.valor;
-
-
-    // 🧾 CARD
-fill(255);
-rect(offsetX + 20, y, larguraApp - 40, 50, 10);
-
-// ===== NOME
-textAlign(LEFT);
-fill(0);
-textSize(14);
-text(c.nome, offsetX + 30, y + 18);
-
-// ===== SERVIÇO
-fill(120);
-textSize(12);
-text(c.servico, offsetX + 30, y + 35);
-
-let colunaDireita = offsetX + larguraApp - 29;
-
-// ===== DATA (direita)
-textAlign(RIGHT);
-fill(150);
-textSize(11);
-text(formatarDataBR(c.data), colunaDireita, y + 35);
-
-// ===== VALOR (direita)
-fill(c.pago ? '#2ecc71' : '#e74c3c');
-textSize(13);
-text(`R$ ${c.valor}`, colunaDireita, y + 20);
-
-// 🔁 volta pro padrão
-textAlign(LEFT);
-
-    y += 60;
-  }
-
-	 // scroll termina
-drawingContext.restore();
-pop();
-
-let pendente = total - recebido;
-
-
-  // 💰 RESUMO
-  fill(0);
-  textSize(14);
-  text(`Total: R$ ${total}`, offsetX + 20, 120);
-  text(`Recebido: R$ ${recebido}`, offsetX + 160, 120);
-  text(`Pendente: R$ ${pendente}`, offsetX + 320, 120);
-
-}
 
 function mousePressed() {
   tempoClique = millis();
 }
 
-
 function mouseReleased() {
 
-  // 🔙 RELATÓRIO
-  if (telaAtual === 'relatorio') {
-    if (
-      mouseX > offsetX + 20 &&
-      mouseX < offsetX + 120 &&
-      mouseY > 60 &&
-      mouseY < 95
-    ) {
-      telaAtual = 'principal';
-      return;
-    }
-  }
-
-  // 🔥 AGENDA
+  // 🔥 VOLTAR DA AGENDA
   if (telaAtual === 'agenda') {
-
-    // 🔙 VOLTAR
     if (
-      mouseX > offsetX + 20 &&
-      mouseX < offsetX + 140 &&
-      mouseY > 60 &&
-      mouseY < 110
-    ) {
+  mouseX > offsetX + 20 &&
+  mouseX < offsetX + 140 &&
+  mouseY > 60 &&
+  mouseY < 110
+) {
       telaAtual = 'principal';
       return;
     }
+    
 
-    // ✅ AGENDA DE HOJE
-    if (mesSelecionado === null) {
+  // ✅ BOTÕES DA AGENDA DE HOJE  👇 (COLE AQUI)
+  let hoje = formatarData(new Date());
 
-      let hoje = formatarData(new Date());
+for (let i = 0; i < agendamentos.length; i++) {
+  let a = agendamentos[i];
 
-      for (let i = 0; i < agendamentos.length; i++) {
-        let a = agendamentos[i];
+  if (a.data !== hoje) continue;
+  if (a._yHoje === undefined) continue;
 
-        if (a.data !== hoje) continue;
-        if (a._yHoje === undefined) continue;
+  let y = a._yHoje;
 
-        let y = a._yHoje;
-        let xCard = offsetX + 20;
-        let larguraCard = larguraApp - 40;
-        let yBtn = y - 15;
+  let xCard = offsetX + 20;
+let larguraCard = larguraApp - 40;
 
-        // ✔ PAGAMENTO
-        if (
-          mouseX > xCard + larguraCard - 70 &&
-          mouseX < xCard + larguraCard - 45 &&
-          mouseY > yBtn &&
-          mouseY < yBtn + 25
-        ) {
+let yBtn = y - 15;
 
-          if (a.pago) return;
+// ✔ PAGAMENTO
+if (
+  mouseX > xCard + larguraCard - 70 &&
+  mouseX < xCard + larguraCard - 45 &&
+  mouseY > yBtn &&
+  mouseY < yBtn + 25
+) {
 
-          a.pago = true;
-          animandoPagamento[i] = 20;
+  // 🚫 BLOQUEIA CLIQUE DUPLO
+  if (a.pago) return;
 
-          animacoesValor.push({
-            x: xCard + larguraCard - 120,
-            y: y,
-            valor: a.valor,
-            vida: 60
-          });
+  a.pago = true;
+  animandoPagamento[i] = 20; // duração da animação
+  animacoesValor.push({
+  x: xCard + larguraCard - 120,
+  y: y,
+  valor: a.valor,
+  vida: 60
+});
 
-          let nomeServico = a.servico;
+  let nomeServico = a.servico;
 
-          if (!isNaN(nomeServico)) {
-            let mapaServicos = {
-              25: 'Mão',
-              35: 'Pé',
-              50: 'Pé + Mão',
-              130: 'Aplicação em Gel',
-              165: 'Aplicação em Gel + Pé',
-              100: 'Manut. Simples',
-              135: 'Manut. Simples + Pé',
-              110: 'Manut c/ Decoração',
-              145: 'Manut c/ Decoração + Pé'
-            };
-            nomeServico = mapaServicos[nomeServico] || 'Serviço';
-          }
+// 🔥 converte número → nome
+if (!isNaN(nomeServico)) {
+  let mapaServicos = {
+  25: 'Mão',
+  35: 'Pé',
+  50: 'Pé + Mão',
+  130: 'Aplicação em Gel',
+  165: 'Aplicação em Gel + Pé',
+  100: 'Manut. Simples',
+  135: 'Manut. Simples + Pé',
+  110: 'Manut c/ Decoração',
+  145: 'Manut c/ Decoração + Pé'
+};
 
-          clientes.push({
-            nome: a.nome,
-            valor: parseFloat(a.valor),
-            pago: true,
-            servico: nomeServico,
-            data: a.data,
-            origem: 'agenda'
-          });
+  nomeServico = mapaServicos[nomeServico] || 'Serviço';
+}
 
-          localStorage.setItem('clientes', JSON.stringify(clientes));
-          localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+clientes.push({
+  nome: a.nome,
+  valor: parseFloat(a.valor),
+  pago: true,
+  servico: nomeServico,
+  data: a.data,
+  origem: 'agenda' // 🔥 controle extra
+	
+});
 
-          return;
-        }
+  localStorage.setItem('clientes', JSON.stringify(clientes));
+  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
 
-        // ✏️ EDITAR
-        if (
-          mouseX > xCard + larguraCard - 40 &&
-          mouseX < xCard + larguraCard - 15 &&
-          mouseY > yBtn &&
-          mouseY < yBtn + 25
-        ) {
-          editandoIndex = i;
+  return;
+}
+  
 
-          nomeAgendaInput.value(a.nome);
-          servicoAgendaSelect.value(a.servico);
-          dataAgendaInput.value(formatarParaInput(a.data));
-          horaAgendaInput.value(a.hora);
+// ✏️ EDITAR
+if (
+  mouseX > xCard + larguraCard - 40 &&
+  mouseX < xCard + larguraCard - 15 &&
+mouseY > yBtn &&
+mouseY < yBtn + 25
+) {
 
-          return;
-        }
-      }
-    }
+  editandoIndex = i;
 
-    // 🔵 EDITAR (com mês)
-    if (mesSelecionado !== null) {
-      for (let i = 0; i < agendamentos.length; i++) {
+  nomeAgendaInput.value(a.nome);
+  servicoAgendaSelect.value(a.servico);
+  dataAgendaInput.value(formatarParaInput(a.data));
+  horaAgendaInput.value(a.hora);
 
-        if (agendamentos[i]._y === undefined) continue;
-        let y = agendamentos[i]._y + scrollY;
+  return;
+}
+      
+  // 👇 ADICIONA ISSO AQUI
+}
+	  
+// 🔵 EDITAR AGENDAMENTO
 
-        if (
-          mouseX > offsetX + larguraApp - 90 &&
-          mouseX < offsetX + larguraApp - 60 &&
-          mouseY > y + 5 &&
-          mouseY < y + 35
-        ) {
-          editandoIndex = i;
+for (let i = 0; i < agendamentos.length; i++) {
 
-          let a = agendamentos[i];
+  if (agendamentos[i]._y === undefined) continue;
+  let y = agendamentos[i]._y + scrollY;
 
-          nomeAgendaInput.value(a.nome);
-          servicoAgendaSelect.value(a.servico);
-          dataAgendaInput.value(formatarParaInput(a.data));
-          horaAgendaInput.value(a.hora);
+  if (
+  mouseX > offsetX + larguraApp - 90 &&
+  mouseX < offsetX + larguraApp - 60 &&
+  mouseY > y + 5 &&
+  mouseY < y + 35
+)
+ {
 
-          return;
-        }
-      }
-    }
+   editandoIndex = i;
 
-    // ❌ EXCLUIR AGENDAMENTO
+let a = agendamentos[i];
+
+nomeAgendaInput.value(a.nome);
+servicoAgendaSelect.value(a.servico);
+dataAgendaInput.value(formatarParaInput(a.data));
+horaAgendaInput.value(a.hora);
+
+return;
+	  
+  }
+}
+	  
+    // 🔥 EXCLUIR AGENDAMENTO
+  
     for (let i = 0; i < agendamentos.length; i++) {
 
-      if (agendamentos[i]._y === undefined) continue;
-      let y = agendamentos[i]._y + scrollY;
+  if (agendamentos[i]._y === undefined) continue;
+  let y = agendamentos[i]._y + scrollY;
 
-      if (
-        mouseX > offsetX + larguraApp - 50 &&
-        mouseX < offsetX + larguraApp - 20 &&
-        mouseY > y + 5 &&
-        mouseY < y + 35
-      ) {
+     if (
+  mouseX > offsetX + larguraApp - 50 &&
+  mouseX < offsetX + larguraApp - 20 &&
+  mouseY > y + 5 &&
+  mouseY < y + 35
+) {
 
         if (confirm('Excluir agendamento?')) {
           agendamentos.splice(i, 1);
+
+          // salva atualizado
           localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
         }
 
         return;
-      }
-    }
-
-    return; // 🔥 MUITO IMPORTANTE
-  }
-
-  // 🔥 CLIENTES (AGORA CORRETO)
-  if (mouseY < 410) return;
-
-  for (let i = 0; i < listaFiltradaGlobal.length; i++) {
-    let c = listaFiltradaGlobal[i];
-
-    if (
-      mouseX > offsetX + 20 &&
-      mouseX < offsetX + larguraApp &&
-      mouseY > c._y + scrollY &&
-      mouseY < c._y + scrollY + 70
-    ) {
-
-      let x = offsetX + larguraApp - 25;
-      let yBtn = c._y + scrollY + 10;
-
-      // 🗑 EXCLUIR
-      if (
-        mouseX > x &&
-        mouseX < x + 20 &&
-        mouseY > yBtn &&
-        mouseY < yBtn + 20
-      ) {
-        if (confirm('Tem certeza que deseja excluir este cliente?')) {
-          let indexReal = clientes.indexOf(c);
-          if (indexReal !== -1) clientes.splice(indexReal, 1);
-          salvar();
-        }
-        return;
-      }
-
-      // ✔ PAGAR
-      if (
-        mouseX > offsetX + larguraApp - 110 &&
-        mouseX < offsetX + larguraApp - 70 &&
-        mouseY > c._y + scrollY &&
-        mouseY < c._y + scrollY + 40
-      ) {
-
-        if (c.pago) return;
-
-        c.pago = true;
-
-        animandoPagamentoClientes[i] = 20;
-
-        animacoesValor.push({
-          x: offsetX + larguraApp - 150,
-          y: c._y + scrollY + 20,
-          valor: c.valor,
-          vida: 60
-        });
-
-        salvar();
-        return;
-      }
-
-      // ↺ DESFAZER
-      if (
-        mouseX > offsetX + larguraApp - 50 &&
-        mouseX < offsetX + larguraApp - 30 &&
-        mouseY > c._y + scrollY + 10 &&
-        mouseY < c._y + scrollY + 30
-      ) {
-        c.pago = false;
-        salvar();
-        return;
-      }
-    }
   }
 }
+
+} // 🔥 AQUI — FECHA AGENDA
+
+
+  // 🔥 CLIENTES (SEU CÓDIGO ORIGINAL)
+	if (mouseY < 410) return; // 👈 ESSA LINHA RESOLVE
+  for (let i = 0; i < listaFiltradaGlobal.length; i++) {
+  let c = listaFiltradaGlobal[i];
+
+    if (
+  mouseX > offsetX + 20 &&
+  mouseX < offsetX + larguraApp &&
+  mouseY > c._y + scrollY &&
+mouseY < c._y + scrollY + 70
+) {
+
+
+        let x = offsetX + larguraApp - 25;
+let yBtn = c._y + scrollY + 10;
+let w = 20;
+let h = 20;
+
+if (
+  mouseX > x &&
+  mouseX < x + w &&
+  mouseY > yBtn &&
+  mouseY < yBtn + h
+) {
+  if (confirm('Tem certeza que deseja excluir este cliente?')) {
+    let indexReal = clientes.indexOf(c);
+
+if (indexReal !== -1) {
+  clientes.splice(indexReal, 1);
+}
+    salvar();
+  }
+  return;
+}
+
+        if (   mouseX > offsetX + larguraApp - 75 &&   mouseX < offsetX + larguraApp - 55 ) {
+          let novoNome = prompt('Editar nome:', c.nome);
+          let novoValor = prompt('Editar valor:', c.valor);
+          if (novoNome && !isNaN(float(novoValor))) {
+            c.nome = novoNome;
+            c.valor = float(novoValor);
+            salvar();
+          }
+          return;
+        }
+
+       // ✔ CONFIRMAR PAGAMENTO
+if (
+  mouseX > offsetX + larguraApp - 110 &&
+  mouseX < offsetX + larguraApp - 70 &&
+  mouseY > c._y + scrollY &&
+  mouseY < c._y + scrollY + 40
+) {
+
+  // 🚫 evita clicar várias vezes
+  if (c.pago) return;
+
+  c.pago = true;
+
+	animandoPagamentoClientes[i] = 20;
+
+  // 💸 ANIMAÇÃO
+  animacoesValor.push({
+    x: offsetX + larguraApp - 150,
+    y: c._y + scrollY + 20,
+    valor: c.valor,
+    vida: 60
+  });
+
+  salvar();
+  return;
+}
+
+// ↺ DESFAZER (botão laranja)
+if (
+  mouseX > offsetX + larguraApp - 50 &&
+  mouseX < offsetX + larguraApp - 30 &&
+  mouseY > c._y + scrollY + 10 &&
+  mouseY < c._y + scrollY + 30
+) {
+  c.pago = false;
+  salvar();
+  return;
+}
+		
+	  
+      // 🔥 CLIQUE LONGO (AGORA NO LUGAR CERTO)
+  let duracao = millis() - tempoClique;
+
+// 🔥 só ativa se NÃO clicou em botão
+let clicouBotao =
+  (mouseX > offsetX + larguraApp - 110 && mouseX < offsetX + larguraApp - 70) || // ✔
+  (mouseX > offsetX + larguraApp - 75 && mouseX < offsetX + larguraApp - 55) ||  // E
+  (mouseX > offsetX + larguraApp - 50 && mouseX < offsetX + larguraApp - 30) ||  // ↺
+  (mouseX > offsetX + larguraApp - 25 && mouseX < offsetX + larguraApp);         // 🗑
+
+if (duracao >= 800 && !clicouBotao) {
+  if (confirm('Excluir cliente?')) {
+    let indexReal = clientes.indexOf(c);
+
+if (indexReal !== -1) {
+  clientes.splice(indexReal, 1);
+}
+    salvar();
+  }
+  return;
+}
+} // fecha for clientes
+
+} // 🔥 fecha if (telaAtual === 'agenda')
+
+} // 🔥 fecha mouseReleased
     
 function formatarData(data) {
   if (typeof data === 'string') {
@@ -2050,10 +1953,8 @@ function soltarFogos() {
 
 function adicionarAgendamento() {
   let nome = nomeAgendaInput.value();
-let selectedOption = servicoAgendaSelect.elt.selectedOptions[0];
-
-let servico = selectedOption ? selectedOption.text : '';
-	let dataBruta = dataAgendaInput.value();
+let servico = servicoAgendaSelect.elt.options[servicoAgendaSelect.elt.selectedIndex].text;
+let dataBruta = dataAgendaInput.value();
 let data = formatarData(dataBruta);
   let hora = horaAgendaInput.value();
 	
@@ -2113,7 +2014,6 @@ agendamentos.sort((a, b) => {
     horaAgendaInput.value('');
   }
 }
-	
 
 function touchStarted() {
   tempoClique = millis();
@@ -2126,19 +2026,12 @@ function touchEnded() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 
-  larguraApp = windowWidth;
-  offsetX = 0;
+  offsetX = max(0, (windowWidth - 420) / 2);
+  larguraApp = min(420, windowWidth - 20);
 }
 
 function touchMoved() {
-
-  if (telaAtual === 'relatorio') {
-    scrollRelatorio -= (pmouseY - mouseY) * 0.8;
-  } else {
-    scrollY -= (pmouseY - mouseY) * 0.8;
-  }
-
-  return false;
+  scrollY -= (pmouseY - mouseY) * 0.8;  return false;
 }
 
 function exportarBackup() {
@@ -2172,5 +2065,43 @@ function importarBackup(file) {
   } catch (e) {
     alert('Erro ao importar backup!');
     console.error(e);
+  }
+}
+
+let db;
+
+function setupFirebase() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqa37G-XlkrCP8h8Zf3WQ_eW5vK4K9CVA",
+    authDomain: "ana-beatriz-nails-designer.firebaseapp.com",
+    projectId: "ana-beatriz-nails-designer",
+    storageBucket: "ana-beatriz-nails-designer.firebasestorage.app",
+    messagingSenderId: "175605569561",
+    appId: "1:175605569561:web:8faa66dbc7c0366918f288"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+}
+
+async function salvarNuvem() {
+  await db.collection("backup").doc("dados").set({
+    clientes: clientes,
+    agendamentos: agendamentos,
+    metas: metasPorMes
+  });
+}
+
+async function carregarNuvem() {
+  let doc = await db.collection("backup").doc("dados").get();
+
+  if (doc.exists) {
+    let dados = doc.data();
+
+    clientes = dados.clientes || [];
+    agendamentos = dados.agendamentos || [];
+    metasPorMes = dados.metas || {};
+
+    salvar(); // atualiza tela
   }
 }
