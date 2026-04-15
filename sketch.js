@@ -63,8 +63,8 @@ function preload() {
 
 function setup() {
 	
-createCanvas(windowWidth, windowHeight);
-
+createCanvas(window.innerWidth, window.innerHeight);
+	
 // 🔥 ocupar tela inteira (iPhone)
 larguraApp = windowWidth;
 offsetX = 0;
@@ -2123,8 +2123,8 @@ function touchEnded() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-
+resizeCanvas(window.innerWidth, window.innerHeight);
+	
   larguraApp = windowWidth;
   offsetX = 0;
 }
